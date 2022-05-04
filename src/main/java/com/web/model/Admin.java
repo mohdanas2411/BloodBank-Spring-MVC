@@ -1,5 +1,10 @@
 package com.web.model;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.SessionAttribute;
+
+
 public class Admin {
 
     private int adminId;
@@ -9,6 +14,13 @@ public class Admin {
     private String adminPassword;
 
     public Admin() {
+    }
+
+    public Admin(int adminId, String adminName, String adminEmail, String adminPassword) {
+        this.adminId = adminId;
+        this.adminName = adminName;
+        this.adminEmail = adminEmail;
+        this.adminPassword = adminPassword;
     }
 
     public int getAdminId() {

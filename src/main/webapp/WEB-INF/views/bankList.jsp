@@ -2,8 +2,7 @@
         pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
-<!DOC TYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
    <meta charset="utf-8">
@@ -11,7 +10,9 @@
    <title>Blood Bank List</title>
 </head>
 <body>
+
    <h3>Welcome! ${name}</h3>
+   <h2  style="align-content: flex-end;"><a href="adminLogout">LogOut</a></h2>
    <br>
    <h3>List of Blood Banks</h3>
 

@@ -9,7 +9,7 @@
 <body>
 
     <h3>${msg}</h3>
-    <h3><a href = "admin">Try Again</a></h3>
+    <h3><a href = ${redirectTo}>Try Again</a></h3>
 
 </body>
 </html>

@@ -7,121 +7,91 @@ import com.web.dao.bloodBanks.BloodBankDaoImple;
 import com.web.model.Admin;
 import com.web.model.BloodBank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
+@SessionAttributes({"admin","name"})
 public class HomeController {
-
-    String adminUri = "Blood_Bank/adminview?email=anas%40gmail.com&password=anas123&Submit=Submit+Query";
-
     @Autowired
     private AdminDao adminDao;
 
-    Admin admin;
-
-    @Autowired
-    private BloodBankDaoImple bloodBankDaoImple;
-
     @RequestMapping("/")
-    public String showHome() {
+    public String showHome(Model model) {
+        model.addAttribute("admin",new Admin());
         return "index";
     }
 
 
-    @RequestMapping("/admin")
+// @ModelAttribute("admin")
+//    public Admin getAddmin(){
+//        return new Admin();
+//    }
+    @RequestMapping("/adminLogin")
     public String adminLoginForm() {
+//        model.addAttribute("email",admin.getAdminEmail());
+//        model.addAttribute("password",admin.getAdminPassword());
         return "adminLoginForm";
     }
 
     // Show all banks
-    @RequestMapping(value = "/adminValidate", method = RequestMethod.POST)
-    public String bankList(@RequestParam String email, @RequestParam String password, ModelMap model) {
-        System.out.println(email);
-        admin = adminDao.get(email);
-        if (email.equalsIgnoreCase(admin.getAdminEmail())) {
-            if (password.equalsIgnoreCase(admin.getAdminPassword())) {
+//    @RequestMapping(value = "/adminValidate", method = RequestMethod.POST)
+//    public String bankList(@RequestParam String adminEmail, @RequestParam String adminPassword, ModelMap model) {
+//        System.out.println(adminEmail);
+//        admin = adminDao.get(adminEmail);
+//        if (adminEmail.equalsIgnoreCase(admin.getAdminEmail())) {
+//            if (adminPassword.equalsIgnoreCase(admin.getAdminPassword())) {
+//                return "redirect:/bankList";
+//            } else {
+//                model.addAttribute("msg", "Password incorrect");
+//                return "error";
+//            }
+//        } else {
+//            model.addAttribute("msg", "Email incorrect");
+//            return "error";
+//        }
+//    }
+
+    // OR
+
+//    @PostMapping(path = "/adminValidate" , consumes = {MediaType.APPLICATION_JSON_VALUE})
+//    public String bankList(@Valid @RequestBody Admin adm, ModelMap model) {
+    @PostMapping(path = "/adminValidate")
+    public String bankList(@ModelAttribute("admin") Admin adm, ModelMap model) {
+        Admin admin = adminDao.get(adm.getAdminEmail());
+        if (adm.getAdminEmail().equalsIgnoreCase(admin.getAdminEmail())) {
+            if (adm.getAdminPassword().equalsIgnoreCase(admin.getAdminPassword())) {
+                model.put("name", admin.getAdminName());
                 return "redirect:/bankList";
             } else {
                 model.addAttribute("msg", "Password incorrect");
+                model.addAttribute("redirectTo","/Blood_Bank/adminLogin");
                 return "error";
             }
         } else {
             model.addAttribute("msg", "Email incorrect");
+            model.addAttribute("redirectTo","/Blood_Bank/adminLogin");
             return "error";
         }
     }
 
-    // Bank List
-    @RequestMapping("bankList")
-    public String bankList(ModelMap model) {
-        model.put("name", admin.getAdminName());
-        model.put("list", bloodBankDaoImple.getBanks());
-        return "bankList";
-    }
 
-    //Bank Details view page
-    @RequestMapping("bloodBankDetailes/{bankId}")
-    public String showBankDetails(@PathVariable("bankId") int bankId, ModelMap modelMap) {
-        modelMap.put("bloodBankObj", bloodBankDaoImple.findById(bankId));
-        return "bloodBankDetails";
-    }
-
-    //delete bank
-    @RequestMapping(value = "bloodBankDelete/{bankId}")
-    public String deleteBank(@PathVariable("bankId") int bankId) {
-        bloodBankDaoImple.delete(bankId);
-        return "redirect:/bankList";
-    }
-
-    //Update bank Form
-    @RequestMapping(value = "bloodBankUpdate/{bankId}")
-    public String updateBank(@ModelAttribute("BloodBank") BloodBank bloodBank, @PathVariable("bankId") int bankId) {
-        BloodBank byId = bloodBankDaoImple.findById(bankId);
-        bloodBank.setBankId(byId.getBankId());
-        bloodBank.setBankName(byId.getBankName());
-        bloodBank.setBankAddress(byId.getBankAddress());
-        bloodBank.setGroupAPosUnit(byId.getGroupAPosUnit());
-        bloodBank.setGroupBPosUnit(byId.getGroupBPosUnit());
-        bloodBank.setGroupOPosUnit(byId.getGroupOPosUnit());
-        bloodBank.setGroupABPosUnit(byId.getGroupABPosUnit());
-        bloodBank.setGroupANegUnit(byId.getGroupANegUnit());
-        bloodBank.setGroupBNegUnit(byId.getGroupBNegUnit());
-        bloodBank.setGroupBNegUnit(byId.getGroupBNegUnit());
-        bloodBank.setGroupONegUnit(byId.getGroupONegUnit());
-        bloodBank.setGroupABNegUnit(byId.getGroupABNegUnit());
-        return "updateBloodBankForm";
-    }
-    // submit update data form
-    @RequestMapping(value = "/bloodBankUpdate/updateDataSubmit")
-    public String  updateDataSubmit(@ModelAttribute("BloodBank") BloodBank bloodBank, BindingResult result) {
-        if (result.hasErrors()){
-            System.out.println("Error in biniding");
-            return "error";
-        }
-        bloodBankDaoImple.saveOrUpdate(bloodBank);
-        return "redirect:/bankList";
-    }
-
-    // add new Blood Bank Form
-    @RequestMapping("addNewBloodBankForm")
-    public String addNewBloodBankForm(@ModelAttribute("BloodBank")BloodBank bloodBank){
-        return "addNewBloodBankForm";
-    }
-
-    // add new blood bank submit
-    @PostMapping("addNewBloodBankSubmit")
-    public String addNewBloodBankSubmit(@ModelAttribute("BloodBank") BloodBank bloodBank){
-        bloodBankDaoImple.addNewBloodBank(bloodBank);
-        return "redirect:/bankList";
+    @GetMapping("adminLogout")
+    public String logOutAdmin(SessionStatus sessionStatus){
+       //sessionStatus.setComplete();
+        return "redirect:/adminLogin";
     }
 
 }

@@ -9,7 +9,7 @@
     </head>
     <body>
         <h3>Welcome, Enter The New Blood Bank Details</h3>
-        <form:form action = "addNewBloodBankSubmit" method = "POsT" modelAttribute="BloodBank">
+        <form:form action = "addNewBloodBankSubmit" method = "POST" modelAttribute="BloodBank">
              <table>
                 <tr>
                     <td><form:label path="bankName">Bank Name : </form:label></td>

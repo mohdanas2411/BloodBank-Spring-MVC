@@ -1,20 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
         pageEncoding="UTF-8" isELIgnored="false"%>
-    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <html>
     <head>
         <meta charset="ISO-8859-1">
         <title>Info page</title>
     </head>
     <body>
-        <h2>WELCOME!</h2>
-        <form action ="adminValidate" method="POST">
-        	<label>Email</label>
-        	<input type="email" name="email" placeholder="Admin Email">
+        <h2>WELCOME! ${admin.adminName}</h2>
+        <form:form action ="adminValidate" method="POST" modelAttribute="admin">
+            <label>Enter Admin Email<label>
+            <form:input path = "adminEmail"/>
         	<br>
-        	<label>Password</label>
-        	<input type="text" name="password" placeholder="Password">
+        	<label>Enter Admin Password</label>
+        	<form:input path="adminPassword" type="password"/>
         	<br><input type="submit" name="Submit">
-        </form>
+        </form:form>
     </body>
 </html>
